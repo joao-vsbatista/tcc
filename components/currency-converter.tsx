@@ -31,12 +31,30 @@ export function CurrencyConverter({ user, profile }: CurrencyConverterProps) {
   const supabase = createClient()
 
   useEffect(() => {
-    convertCurrency()
+    calculatePreview()
   }, [fromCurrency, toCurrency, amount])
 
-  const convertCurrency = async () => {
+  const calculatePreview = async () => {
     if (!amount || isNaN(Number(amount))) {
       setResult(null)
+      return
+    }
+
+    try {
+      const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${fromCurrency}`)
+      const data = await response.json()
+      const exchangeRate = data.rates[toCurrency]
+      const convertedAmount = Number(amount) * exchangeRate
+
+      setRate(exchangeRate)
+      setResult(convertedAmount)
+    } catch (error) {
+      console.error("Error calculating preview:", error)
+    }
+  }
+
+  const convertAndSave = async () => {
+    if (!amount || isNaN(Number(amount))) {
       return
     }
 
@@ -51,7 +69,6 @@ export function CurrencyConverter({ user, profile }: CurrencyConverterProps) {
       setResult(convertedAmount)
       setLastUpdate(new Date())
 
-      // Save to database
       await saveConversion(fromCurrency, toCurrency, Number(amount), convertedAmount, exchangeRate)
     } catch (error) {
       console.error("Error converting currency:", error)
@@ -134,6 +151,14 @@ export function CurrencyConverter({ user, profile }: CurrencyConverterProps) {
               <CurrencySelect value={toCurrency} onChange={setToCurrency} />
             </div>
           </div>
+
+          <Button
+            onClick={convertAndSave}
+            disabled={loading || !amount || isNaN(Number(amount))}
+            className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? "Convertendo..." : "Converter e Salvar"}
+          </Button>
 
           {/* Exchange Rate Info */}
           {rate && (
