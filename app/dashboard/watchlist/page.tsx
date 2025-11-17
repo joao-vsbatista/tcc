@@ -1,7 +1,8 @@
-import { redirect } from "next/navigation"
+import { redirect } from 'next/navigation'
 import { createClient } from "@/lib/supabase/server"
 import { WatchlistManager } from "@/components/watchlist-manager"
 import Link from "next/link"
+import { MobileNavBar } from "@/components/mobile-nav-bar"
 
 export default async function WatchlistPage() {
   const supabase = await createClient()
@@ -22,7 +23,7 @@ export default async function WatchlistPage() {
     .order("created_at", { ascending: false })
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black pb-20 md:pb-8">
       <div className="container max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6">
           <Link
@@ -41,6 +42,7 @@ export default async function WatchlistPage() {
 
         <WatchlistManager userId={user.id} initialWatchlist={watchlist || []} />
       </div>
+      <MobileNavBar />
     </div>
   )
 }

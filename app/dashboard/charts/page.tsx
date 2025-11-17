@@ -1,22 +1,43 @@
-import { redirect } from "next/navigation"
-import { createClient } from "@/lib/supabase/server"
+"use client"
+
+import { useEffect, useState } from "react"
+import { useRouter } from 'next/navigation'
 import { CurrencyChart } from "@/components/currency-chart"
 import Link from "next/link"
+import { createClient } from "@/lib/supabase/client"
+import { MobileNavBar } from "@/components/mobile-nav-bar"
 
-export default async function ChartsPage() {
-  const supabase = await createClient()
+export default function ChartsPage() {
+  const router = useRouter()
+  const [loading, setLoading] = useState(true)
 
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser()
+  useEffect(() => {
+    const checkAuth = async () => {
+      const supabase = createClient()
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
 
-  if (error || !user) {
-    redirect("/auth/login")
+      if (!user) {
+        router.push("/auth/login")
+      } else {
+        setLoading(false)
+      }
+    }
+
+    checkAuth()
+  }, [router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white">Carregando...</div>
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black pb-20 md:pb-8">
       <div className="container max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6">
           <Link
@@ -35,6 +56,7 @@ export default async function ChartsPage() {
 
         <CurrencyChart />
       </div>
+      <MobileNavBar />
     </div>
   )
 }

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { CurrencySelect } from "@/components/currency-select"
 import { RecentConversionsDB } from "@/components/recent-conversions-db"
 import { createClient } from "@/lib/supabase/client"
+import { TrendingUpIcon } from "@/components/icons"
 
 interface CurrencyConverterProps {
   user: {
@@ -29,6 +30,8 @@ export function CurrencyConverter({ user, profile }: CurrencyConverterProps) {
   const [refreshKey, setRefreshKey] = useState(0)
 
   const supabase = createClient()
+
+  // Agora a conversão só acontece quando o usuário clica no botão
 
   useEffect(() => {
     calculatePreview()
@@ -69,6 +72,7 @@ export function CurrencyConverter({ user, profile }: CurrencyConverterProps) {
       setResult(convertedAmount)
       setLastUpdate(new Date())
 
+      // Salva no histórico apenas quando o botão é clicado
       await saveConversion(fromCurrency, toCurrency, Number(amount), convertedAmount, exchangeRate)
     } catch (error) {
       console.error("Error converting currency:", error)
@@ -103,7 +107,7 @@ export function CurrencyConverter({ user, profile }: CurrencyConverterProps) {
       {/* Header */}
       <div className="text-center mb-6">
         <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 mb-4">
-          <span className="text-3xl">📈</span>
+          <TrendingUpIcon className="w-8 h-8 text-white" />
         </div>
         <h1 className="text-3xl font-bold text-white mb-2">Conversor de Moedas</h1>
         <p className="text-gray-400">Taxas de câmbio em tempo real</p>
@@ -144,9 +148,7 @@ export function CurrencyConverter({ user, profile }: CurrencyConverterProps) {
             <label className="text-sm font-medium text-gray-400">Para</label>
             <div className="flex gap-3">
               <div className="flex-1 h-14 rounded-lg border border-gray-700 bg-gray-800 px-4 flex items-center">
-                <span className="text-2xl font-semibold text-white">
-                  {loading ? "..." : result?.toFixed(2) || "0.00"}
-                </span>
+                <span className="text-2xl font-semibold text-white">{result?.toFixed(2) || "0.00"}</span>
               </div>
               <CurrencySelect value={toCurrency} onChange={setToCurrency} />
             </div>

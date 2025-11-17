@@ -1,7 +1,8 @@
-import { redirect } from "next/navigation"
+import { redirect } from 'next/navigation'
 import { createClient } from "@/lib/supabase/server"
 import { ProfileForm } from "@/components/profile-form"
 import Link from "next/link"
+import { MobileNavBar } from "@/components/mobile-nav-bar"
 
 export default async function ProfilePage() {
   const supabase = await createClient()
@@ -18,7 +19,7 @@ export default async function ProfilePage() {
   const { data: profile } = await supabase.from("profiles").select("*").eq("id", user.id).single()
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black pb-20 md:pb-8">
       <div className="container max-w-md mx-auto px-4 py-8">
         <div className="mb-6">
           <Link
@@ -37,6 +38,7 @@ export default async function ProfilePage() {
 
         <ProfileForm user={user} profile={profile} />
       </div>
+      <MobileNavBar />
     </div>
   )
 }
