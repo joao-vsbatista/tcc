@@ -5,6 +5,7 @@ import { AddBalanceModal } from "@/components/add-balance-modal"
 import { ConvertModal } from "@/components/convert-modal"
 import { SendBalanceModal } from "@/components/send-balance-modal"
 import { ReceiveBalanceModal } from "@/components/receive-balance-modal"
+import { AddMoneyIcon, ConvertIcon, SendIcon, ReceiveIcon } from "@/components/icons"
 
 interface MainActionsProps {
   userId: string
@@ -21,28 +22,28 @@ export function MainActions({ userId, profile }: MainActionsProps) {
     {
       name: "Adicionar",
       description: "Via PIX ou Boleto",
-      icon: "💰",
+      icon: AddMoneyIcon,
       gradient: "from-green-500 to-emerald-600",
       onClick: () => setShowAddModal(true),
     },
     {
       name: "Converter",
       description: "Entre moedas",
-      icon: "🔄",
+      icon: ConvertIcon,
       gradient: "from-blue-500 to-purple-600",
       onClick: () => setShowConvertModal(true),
     },
     {
       name: "Enviar",
       description: "Via PIX",
-      icon: "📤",
+      icon: SendIcon,
       gradient: "from-orange-500 to-red-600",
       onClick: () => setShowSendModal(true),
     },
     {
       name: "Receber",
       description: "Via PIX",
-      icon: "📥",
+      icon: ReceiveIcon,
       gradient: "from-cyan-500 to-blue-600",
       onClick: () => setShowReceiveModal(true),
     },
@@ -50,22 +51,25 @@ export function MainActions({ userId, profile }: MainActionsProps) {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-4">
-        {actions.map((action) => (
-          <button
-            key={action.name}
-            onClick={action.onClick}
-            className="group bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-2xl p-6 transition-all hover:scale-105 hover:border-gray-700"
-          >
-            <div
-              className={`w-14 h-14 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center mb-4 mx-auto`}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {actions.map((action) => {
+          const IconComponent = action.icon
+          return (
+            <button
+              key={action.name}
+              onClick={action.onClick}
+              className="group bg-gray-900 hover:bg-gray-800 border border-gray-800 rounded-2xl p-6 transition-all hover:scale-105 hover:border-gray-700"
             >
-              <span className="text-3xl">{action.icon}</span>
-            </div>
-            <h3 className="text-white font-semibold text-lg mb-1">{action.name}</h3>
-            <p className="text-gray-400 text-sm">{action.description}</p>
-          </button>
-        ))}
+              <div
+                className={`w-14 h-14 rounded-xl bg-gradient-to-br ${action.gradient} flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform`}
+              >
+                <IconComponent className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-white font-semibold text-lg mb-1">{action.name}</h3>
+              <p className="text-gray-400 text-sm">{action.description}</p>
+            </button>
+          )
+        })}
       </div>
 
       {showAddModal && <AddBalanceModal userId={userId} onClose={() => setShowAddModal(false)} />}
