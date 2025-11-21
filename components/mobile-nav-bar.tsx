@@ -19,6 +19,16 @@ export function MobileNavBar() {
       icon: WalletIcon,
     },
     {
+      name: "Simular",
+      href: "/dashboard/simulator",
+      icon: () => (
+        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="10" strokeWidth="2" />
+          <path d="M8 12h8M12 8v8" strokeWidth="2" />
+        </svg>
+      ),
+    },
+    {
       name: "Gráficos",
       href: "/dashboard/charts",
       icon: ChartIcon,
@@ -27,11 +37,6 @@ export function MobileNavBar() {
       name: "Histórico",
       href: "/dashboard/history",
       icon: HistoryIcon,
-    },
-    {
-      name: "Config",
-      href: "/dashboard/settings",
-      icon: () => <span className="text-2xl">⚙️</span>,
     },
   ]
 

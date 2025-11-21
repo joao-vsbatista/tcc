@@ -18,49 +18,44 @@ export function ConvertModal({ userId, profile, onClose }: ConvertModalProps) {
   const [result, setResult] = useState<number | null>(null)
   const [rate, setRate] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
-  const [includeFees, setIncludeFees] = useState(true)
-  const [paymentMethod, setPaymentMethod] = useState<"dinheiro" | "credito" | "debito" | "transferencia">("credito")
+  const [fromBalance, setFromBalance] = useState<number>(0)
+  const [toBalance, setToBalance] = useState<number>(0)
 
   const supabase = createClient()
+
+  useEffect(() => {
+    loadBalances()
+  }, [fromCurrency, toCurrency])
+
+  const loadBalances = async () => {
+    const { data: wallets } = await supabase
+      .from("wallet")
+      .select("currency, balance")
+      .eq("user_id", userId)
+      .in("currency", [fromCurrency, toCurrency])
+
+    const from = wallets?.find((w) => w.currency === fromCurrency)
+    const to = wallets?.find((w) => w.currency === toCurrency)
+
+    setFromBalance(from?.balance || 0)
+    setToBalance(to?.balance || 0)
+  }
 
   useEffect(() => {
     if (amount && Number(amount) > 0) {
       calculatePreview()
     }
-  }, [fromCurrency, toCurrency, amount, includeFees, paymentMethod])
+  }, [fromCurrency, toCurrency, amount])
 
-  const calculateFees = (baseAmount: number, method: string) => {
-    let iofRate = 0
-    let spreadRate = 0
-    let transactionFee = 0
+  const calculateFees = (baseAmount: number) => {
+    const spreadRate = 0.04 // 4% spread bancário
+    const conversionFee = 0.01 // 1% taxa de conversão
+    const totalFeeRate = spreadRate + conversionFee
 
-    switch (method) {
-      case "dinheiro":
-        iofRate = 0.0011
-        spreadRate = 0.04
-        break
-      case "credito":
-        iofRate = 0.0638
-        spreadRate = 0.04
-        transactionFee = 0.02
-        break
-      case "debito":
-        iofRate = 0.0638
-        spreadRate = 0.03
-        transactionFee = 0.015
-        break
-      case "transferencia":
-        iofRate = 0.0038
-        spreadRate = 0.02
-        transactionFee = 0.01
-        break
-    }
-
-    const totalFeeRate = iofRate + spreadRate + transactionFee
     const totalFees = baseAmount * totalFeeRate
-    const finalAmount = baseAmount + totalFees
+    const finalAmount = baseAmount - totalFees // Subtrai porque está convertendo da carteira
 
-    return { finalAmount, totalFeeRate }
+    return { finalAmount, totalFeeRate, totalFees }
   }
 
   const calculatePreview = async () => {
@@ -70,10 +65,8 @@ export function ConvertModal({ userId, profile, onClose }: ConvertModalProps) {
       const exchangeRate = data.rates[toCurrency]
       let convertedAmount = Number(amount) * exchangeRate
 
-      if (includeFees) {
-        const { finalAmount } = calculateFees(convertedAmount, paymentMethod)
-        convertedAmount = finalAmount
-      }
+      const { finalAmount, totalFees } = calculateFees(convertedAmount)
+      convertedAmount = finalAmount
 
       setRate(exchangeRate)
       setResult(convertedAmount)
@@ -85,8 +78,42 @@ export function ConvertModal({ userId, profile, onClose }: ConvertModalProps) {
   const handleConvert = async () => {
     if (!amount || Number(amount) <= 0 || !result) return
 
+    if (fromBalance < Number(amount)) {
+      alert("Saldo insuficiente")
+      return
+    }
+
     setLoading(true)
     try {
+      await supabase
+        .from("wallet")
+        .update({ balance: fromBalance - Number(amount) })
+        .eq("user_id", userId)
+        .eq("currency", fromCurrency)
+
+      // Verifica se já existe carteira na moeda de destino
+      const { data: existingWallet } = await supabase
+        .from("wallet")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("currency", toCurrency)
+        .single()
+
+      if (existingWallet) {
+        await supabase
+          .from("wallet")
+          .update({ balance: toBalance + (result || 0) })
+          .eq("user_id", userId)
+          .eq("currency", toCurrency)
+      } else {
+        await supabase.from("wallet").insert({
+          user_id: userId,
+          currency: toCurrency,
+          balance: result || 0,
+        })
+      }
+
+      // Registra histórico
       await supabase.from("conversion_history").insert({
         user_id: userId,
         from_currency: fromCurrency,
@@ -94,6 +121,15 @@ export function ConvertModal({ userId, profile, onClose }: ConvertModalProps) {
         amount: Number(amount),
         result: result,
         rate: rate || 0,
+      })
+
+      // Registra transação
+      await supabase.from("wallet_transactions").insert({
+        user_id: userId,
+        type: "convert",
+        currency: fromCurrency,
+        amount: Number(amount),
+        method: "wallet",
       })
 
       window.location.reload()
@@ -116,6 +152,13 @@ export function ConvertModal({ userId, profile, onClose }: ConvertModalProps) {
         <h2 className="text-2xl font-bold text-white mb-6">Converter Moedas</h2>
 
         <div className="space-y-4">
+          <div className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-3">
+            <p className="text-xs text-blue-400">Saldo disponível em {fromCurrency}</p>
+            <p className="text-lg font-bold text-white">
+              {fromBalance.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
+          </div>
+
           <div>
             <label className="text-sm text-gray-400 mb-2 block">De</label>
             <div className="flex gap-3">
@@ -152,47 +195,12 @@ export function ConvertModal({ userId, profile, onClose }: ConvertModalProps) {
             </div>
           </div>
 
-          <div className="pt-4 border-t border-gray-800 space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <label className="text-sm font-medium text-white">Incluir Taxas</label>
-                <p className="text-xs text-gray-500">IOF + Spread</p>
-              </div>
-              <button
-                onClick={() => setIncludeFees(!includeFees)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  includeFees ? "bg-blue-600" : "bg-gray-700"
-                }`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                    includeFees ? "translate-x-6" : "translate-x-1"
-                  }`}
-                />
-              </button>
+          {result && (
+            <div className="bg-yellow-900/20 border border-yellow-700/30 rounded-lg p-3 text-xs">
+              <p className="text-yellow-400 font-semibold mb-1">Taxas aplicadas: 5%</p>
+              <p className="text-gray-400">4% spread bancário + 1% taxa de conversão</p>
             </div>
-
-            {includeFees && (
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { value: "dinheiro", label: "Dinheiro" },
-                  { value: "credito", label: "Crédito" },
-                  { value: "debito", label: "Débito" },
-                  { value: "transferencia", label: "Transfer" },
-                ].map((method) => (
-                  <button
-                    key={method.value}
-                    onClick={() => setPaymentMethod(method.value as any)}
-                    className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
-                      paymentMethod === method.value ? "bg-blue-600 text-white" : "bg-gray-800 text-gray-400"
-                    }`}
-                  >
-                    {method.label}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          )}
 
           <div className="flex gap-3 pt-4">
             <button
@@ -203,7 +211,7 @@ export function ConvertModal({ userId, profile, onClose }: ConvertModalProps) {
             </button>
             <button
               onClick={handleConvert}
-              disabled={loading || !amount || Number(amount) <= 0}
+              disabled={loading || !amount || Number(amount) <= 0 || fromBalance < Number(amount)}
               className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 transition-all"
             >
               {loading ? "Convertendo..." : "Converter"}
