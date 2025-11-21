@@ -53,3 +53,11 @@ export function CurrencyIcon({ className = "w-6 h-6" }: { className?: string }) 
     </svg>
   )
 }
+
+export function PercentIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-6a2 2 0 0 1 2-2m14 0V9a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6m14 0-4-4m0 4-4 4" />
+    </svg>
+  )
+}

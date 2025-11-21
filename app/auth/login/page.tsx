@@ -3,7 +3,7 @@
 import type React from "react"
 import { createClient } from "@/lib/supabase/client"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter } from 'next/navigation'
 import { useState } from "react"
 
 export default function LoginPage() {
@@ -20,20 +20,22 @@ export default function LoginPage() {
     setError(null)
 
     try {
+      console.log("[v0] Attempting login with email:", email)
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
+
+      console.log("[v0] Login response:", { data, error })
+
       if (error) throw error
 
-      if (data.session) {
-        document.cookie = `sb-access-token=${data.session.access_token}; path=/; max-age=3600`
-        document.cookie = `sb-refresh-token=${data.session.refresh_token}; path=/; max-age=604800`
-      }
-
+      console.log("[v0] Login successful, redirecting to dashboard")
       router.push("/dashboard")
       router.refresh()
     } catch (error: unknown) {
+      console.error("[v0] Login error:", error)
       setError(error instanceof Error ? error.message : "Erro ao fazer login")
     } finally {
       setIsLoading(false)
@@ -74,9 +76,17 @@ export default function LoginPage() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <label htmlFor="password" className="text-sm font-medium text-gray-300">
-                    Senha
-                  </label>
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="password" className="text-sm font-medium text-gray-300">
+                      Senha
+                    </label>
+                    <Link 
+                      href="/auth/forgot-password" 
+                      className="text-xs text-blue-400 hover:underline"
+                    >
+                      Esqueci minha senha
+                    </Link>
+                  </div>
                   <input
                     id="password"
                     type="password"
