@@ -32,7 +32,7 @@ export default async function WalletPage() {
           >
             ← Voltar
           </a>
-          <h1 className="text-3xl font-bold text-white mb-2">💰 Carteira</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Carteira</h1>
           <p className="text-gray-400">Gerencie seus saldos em diferentes moedas</p>
         </div>
 

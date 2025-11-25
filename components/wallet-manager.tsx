@@ -378,12 +378,12 @@ export function WalletManager({ userId, initialWalletData }: WalletManagerProps)
                     </p>
                   </div>
                   <div className="text-4xl">
-                    {wallet.currency === "USD" && "💵"}
-                    {wallet.currency === "BRL" && "💰"}
-                    {wallet.currency === "EUR" && "💶"}
-                    {wallet.currency === "GBP" && "💷"}
-                    {wallet.currency === "JPY" && "💴"}
-                    {!["USD", "BRL", "EUR", "GBP", "JPY"].includes(wallet.currency) && "💳"}
+                    {wallet.currency === "USD"}
+                    {wallet.currency === "BRL"}
+                    {wallet.currency === "EUR"}
+                    {wallet.currency === "GBP"}
+                    {wallet.currency === "JPY"}
+                    {!["USD", "BRL", "EUR", "GBP", "JPY"].includes(wallet.currency)}
                   </div>
                 </div>
               </CardContent>
