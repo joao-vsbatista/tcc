@@ -1,9 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from 'next/navigation'
-import { WalletIcon, ChartIcon, HistoryIcon, CalculatorIcon, CompareIcon } from "@/components/icons"
-import { CurrencyIcon } from "@/components/icons"
+import { usePathname } from "next/navigation"
+import { WalletIcon, ChartIcon, HistoryIcon, CurrencyIcon } from "@/components/icons"
 
 export function MobileNavBar() {
   const pathname = usePathname()
@@ -30,9 +29,9 @@ export function MobileNavBar() {
       icon: HistoryIcon,
     },
     {
-      name: "Mais",
+      name: "Config",
       href: "/dashboard/settings",
-      icon: CalculatorIcon,
+      icon: () => <span className="text-2xl">⚙️</span>,
     },
   ]
 
@@ -42,15 +41,13 @@ export function MobileNavBar() {
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href
-          
+
           return (
             <Link
               key={item.href}
               href={item.href}
               className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
-                isActive
-                  ? "text-blue-400"
-                  : "text-gray-400 hover:text-gray-200"
+                isActive ? "text-blue-400" : "text-gray-400 hover:text-gray-200"
               }`}
             >
               <Icon className="w-6 h-6 mb-1" />

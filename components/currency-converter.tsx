@@ -159,7 +159,7 @@ export function CurrencyConverter({ user, profile }: CurrencyConverterProps) {
             disabled={loading || !amount || isNaN(Number(amount))}
             className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Convertendo..." : "Converter e Salvar"}
+            {loading ? "Convertendo..." : "Converter"}
           </Button>
 
           {/* Exchange Rate Info */}
