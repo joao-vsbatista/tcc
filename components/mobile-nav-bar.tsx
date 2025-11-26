@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { WalletIcon, ChartIcon, HistoryIcon, CurrencyIcon } from "@/components/icons"
+import { WalletIcon, ChartIcon, HistoryIcon, CurrencyIcon, SettingsIcon } from "@/components/icons"
 
 export function MobileNavBar() {
   const pathname = usePathname()
@@ -31,7 +31,7 @@ export function MobileNavBar() {
     {
       name: "Config",
       href: "/dashboard/settings",
-      icon: () => <span className="text-2xl">⚙️</span>,
+      icon: SettingsIcon,
     },
   ]
 

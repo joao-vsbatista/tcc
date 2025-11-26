@@ -90,7 +90,7 @@ export function PercentIcon({ className = "w-6 h-6" }: { className?: string }) {
   )
 }
 
-export function AddMoneyIcon({ className = "w-6 h-6" }: { className?: string }) {
+export function AddMoneyIcon({ className = "w-6 h-6 " }: { className?: string }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -129,6 +129,18 @@ export function ReceiveIcon({ className = "w-6 h-6" }: { className?: string }) {
         strokeLinecap="round"
         strokeLinejoin="round"
         d="M9 8.25H7.5a2.25 2.25 0 0 0-2.25 2.25v9a2.25 2.25 0 0 0 2.25 2.25h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25H15M9 12l3 3m0 0 3-3m-3 3V2.25"
+      />
+    </svg>
+  )
+}
+
+export function SettingsIcon({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M10.325 4.317a1 1 0 0 1 .95-.317 1 1 0 0 1 .661.493l1.05 1.816a1 1 0 0 0 .95.498l2.016-.117a1 1 0 0 1 1.01.75l.38 1.518a1 1 0 0 0 .674.71l1.864.622a1 1 0 0 1 .563 1.318l-.76 1.843a1 1 0 0 0 .115.95l1.216 1.654a1 1 0 0 1-.118 1.33l-1.2 1.2a1 1 0 0 1-1.331.118l-1.654-1.216a1 1 0 0 0-.95-.115l-1.843.76a1 1 0 0 1-1.318-.563l-.622-1.864a1 1 0 0 0-.71-.674l-1.518-.38a1 1 0 0 1-.75-1.01l.117-2.016a1 1 0 0 0-.498-.95l-1.816-1.05a1 1 0 0 1-.493-.661 1 1 0 0 1 .317-.95l1.2-1.2ZM12 9.75a2.25 2.25 0 1 0 0 4.5 2.25 2.25 0 0 0 0-4.5Z"
       />
     </svg>
   )

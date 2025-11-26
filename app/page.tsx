@@ -38,10 +38,10 @@ export default function HomePage() {
       <div className="container max-w-4xl mx-auto px-4 py-16">
         <div className="text-center mb-12">
           <div className="inline-flex items-center justify-center mb-6">
-            <Image src="/logo.jpg" alt="Conversor de Moedas Logo" width={120} height={120} className="rounded-3xl" />
+            <Image src="/logo.png" alt="Conversor de Moedas Logo" width={120} height={120} className="rounded-3xl" />
           </div>
           <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            Conversor de Moedas
+            Coinvert
           </h1>
           <p className="text-xl text-gray-400 mb-8">Sistema completo de conversão com análise e histórico</p>
         </div>
