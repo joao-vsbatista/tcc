@@ -232,14 +232,14 @@ export function WalletManager({ userId, initialWalletData }: WalletManagerProps)
           onClick={() => setShowAddBalance(!showAddBalance)}
           className="bg-green-600 hover:bg-green-700 text-white"
         >
-          ➕ Adicionar Saldo
+           Adicionar Saldo
         </Button>
         <Button
           onClick={() => setShowConvert(!showConvert)}
           className="bg-blue-600 hover:bg-blue-700 text-white"
           disabled={walletData.length === 0}
         >
-          🔄 Converter
+           Converter
         </Button>
       </div>
 

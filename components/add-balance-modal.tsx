@@ -89,7 +89,7 @@ export function AddBalanceModal({ userId, onClose }: AddBalanceModalProps) {
                     : "border-gray-700 bg-gray-800 text-gray-400"
                 }`}
               >
-                <div className="text-2xl mb-2">📱</div>
+                <div className="text-2xl mb-2"></div>
                 <div className="font-semibold">PIX</div>
               </button>
               <button
@@ -100,7 +100,7 @@ export function AddBalanceModal({ userId, onClose }: AddBalanceModalProps) {
                     : "border-gray-700 bg-gray-800 text-gray-400"
                 }`}
               >
-                <div className="text-2xl mb-2">🧾</div>
+                <div className="text-2xl mb-2"></div>
                 <div className="font-semibold">Boleto</div>
               </button>
             </div>

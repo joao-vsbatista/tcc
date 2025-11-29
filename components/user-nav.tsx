@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { User, Settings, LogOut, History, TrendingUp, Star } from "lucide-react"
+import { User, Settings, LogOut, History, TrendingUp, Star, Wallet } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
@@ -100,6 +100,12 @@ export function UserNav({ user, profile }: UserNavProps) {
                 <Link href="/dashboard/settings" className="cursor-pointer">
                   <Settings className="mr-2 h-4 w-4" />
                   <span>Configurações</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/wallet" className="cursor-pointer">
+                  <Wallet className="mr-2 h-4 w-4" />
+                  <span>Carteira</span>
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />

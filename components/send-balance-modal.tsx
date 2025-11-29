@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { createClient } from "@/lib/supabase/client"
 import { Input } from "@/components/ui/input"
 
@@ -13,30 +13,36 @@ export function SendBalanceModal({ userId, onClose }: SendBalanceModalProps) {
   const [amount, setAmount] = useState("")
   const [pixKey, setPixKey] = useState("")
   const [loading, setLoading] = useState(false)
+  const [balance, setBalance] = useState<number>(0)
 
   const supabase = createClient()
+
+  useEffect(() => {
+    loadBalance()
+  }, [])
+
+  const loadBalance = async () => {
+    const { data: wallet } = await supabase
+      .from("wallet")
+      .select("balance")
+      .eq("user_id", userId)
+      .eq("currency", "BRL")
+      .single()
+
+    setBalance(wallet?.balance || 0)
+  }
 
   const handleSend = async () => {
     if (!amount || Number(amount) <= 0 || !pixKey) return
 
+    if (balance < Number(amount)) {
+      alert("Saldo insuficiente")
+      return
+    }
+
     setLoading(true)
     try {
-      const { data: wallet } = await supabase
-        .from("wallet")
-        .select("balance")
-        .eq("user_id", userId)
-        .eq("currency", "BRL")
-        .single()
-
-      const currentBalance = wallet?.balance || 0
-
-      if (currentBalance < Number(amount)) {
-        alert("Saldo insuficiente")
-        setLoading(false)
-        return
-      }
-
-      const newBalance = currentBalance - Number(amount)
+      const newBalance = balance - Number(amount)
 
       await supabase.from("wallet").update({ balance: newBalance }).eq("user_id", userId).eq("currency", "BRL")
 
@@ -66,6 +72,13 @@ export function SendBalanceModal({ userId, onClose }: SendBalanceModalProps) {
         <h2 className="text-2xl font-bold text-white mb-6">Enviar via PIX</h2>
 
         <div className="space-y-4">
+          <div className="bg-blue-900/20 border border-blue-700/30 rounded-lg p-3">
+            <p className="text-xs text-blue-400">Saldo disponível</p>
+            <p className="text-lg font-bold text-white">
+              R$ {balance.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
+          </div>
+
           <div>
             <label className="text-sm text-gray-400 mb-2 block">Chave PIX</label>
             <Input
@@ -97,7 +110,7 @@ export function SendBalanceModal({ userId, onClose }: SendBalanceModalProps) {
             </button>
             <button
               onClick={handleSend}
-              disabled={loading || !amount || Number(amount) <= 0 || !pixKey}
+              disabled={loading || !amount || Number(amount) <= 0 || !pixKey || balance < Number(amount)}
               className="flex-1 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-600 text-white font-semibold hover:from-orange-600 hover:to-red-700 disabled:opacity-50 transition-all"
             >
               {loading ? "Enviando..." : "Enviar"}
