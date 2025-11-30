@@ -1,11 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { AddBalanceModal } from "@/components/add-balance-modal"
 import { ConvertModal } from "@/components/convert-modal"
 import { SendBalanceModal } from "@/components/send-balance-modal"
 import { ReceiveBalanceModal } from "@/components/receive-balance-modal"
-import { AddMoneyIcon, ConvertIcon, SendIcon, ReceiveIcon } from "@/components/icons"
+import { AddMoneyIcon, ConvertIcon, SendIcon, ReceiveIcon, WalletIcon } from "@/components/icons"
 
 interface MainActionsProps {
   userId: string
@@ -17,14 +18,16 @@ export function MainActions({ userId, profile }: MainActionsProps) {
   const [showConvertModal, setShowConvertModal] = useState(false)
   const [showSendModal, setShowSendModal] = useState(false)
   const [showReceiveModal, setShowReceiveModal] = useState(false)
+  const router = useRouter()
+
 
   const actions = [
     {
-      name: "Adicionar",
-      description: "Via PIX ou Boleto",
-      icon: AddMoneyIcon,
+      name: "Carteira",
+      description: "Confira seus saldos",
+      icon: WalletIcon,
       gradient: "from-black to-black",
-      onClick: () => setShowAddModal(true),
+      onClick: () => router.push("/dashboard/wallet"),
     },
     {
       name: "Converter",
