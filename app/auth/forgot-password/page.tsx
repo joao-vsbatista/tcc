@@ -1,105 +1,74 @@
 "use client"
 
-import type React from "react"
-import { createClient } from "@/lib/supabase/client"
-import Link from "next/link"
 import { useState } from "react"
+import Link from "next/link"
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("")
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [sent, setSent] = useState(false)
 
-  const handleResetPassword = async (e: React.FormEvent) => {
+  const handleSend = (e: React.FormEvent) => {
     e.preventDefault()
-    const supabase = createClient()
-    setIsLoading(true)
-    setError(null)
-    setSuccess(false)
 
-    try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/reset-password`,
-      })
-
-      if (error) throw error
-
-      setSuccess(true)
-    } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : "Erro ao enviar email de recuperação")
-    } finally {
-      setIsLoading(false)
-    }
+    // SIMULAÇÃO de envio de email
+    setTimeout(() => {
+      setSent(true)
+    }, 1000)
   }
 
   return (
-    <div className="flex min-h-screen w-full items-center justify-center p-6 bg-black">
-      <div className="w-full max-w-sm">
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col items-center gap-2 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 mb-2">
-              <span className="text-4xl">🔐</span>
-            </div>
-            <h1 className="text-2xl font-bold text-white">Recuperar Senha</h1>
-            <p className="text-sm text-gray-400">
-              Digite seu email para receber o link de recuperação
+    <div className="flex min-h-screen items-center justify-center bg-black p-6">
+      <div className="w-full max-w-sm bg-gray-900 p-6 rounded-2xl border border-gray-800">
+        {!sent ? (
+          <>
+            <h1 className="text-2xl font-bold text-white mb-2">Recuperar senha</h1>
+            <p className="text-sm text-gray-400 mb-6">
+              Digite seu email para receber o link de redefinição.
             </p>
-          </div>
 
-          <div className="bg-gray-900 rounded-2xl p-6 border border-gray-800">
-            {success ? (
-              <div className="flex flex-col gap-4">
-                <div className="text-sm text-green-400 bg-green-500/10 p-4 rounded-lg border border-green-500/20">
-                  Email enviado com sucesso! Verifique sua caixa de entrada e spam.
-                </div>
-                <Link
-                  href="/auth/login"
-                  className="w-full h-10 px-4 bg-gray-800 text-white font-semibold rounded-lg hover:bg-gray-700 transition-colors flex items-center justify-center"
-                >
-                  Voltar para login
-                </Link>
+            <form onSubmit={handleSend} className="flex flex-col gap-4">
+              <div className="grid gap-2">
+                <label className="text-sm text-gray-300">Email</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-10 px-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:outline-none"
+                />
               </div>
-            ) : (
-              <form onSubmit={handleResetPassword}>
-                <div className="flex flex-col gap-6">
-                  <div className="grid gap-2">
-                    <label htmlFor="email" className="text-sm font-medium text-gray-300">
-                      Email
-                    </label>
-                    <input
-                      id="email"
-                      type="email"
-                      placeholder="seu@email.com"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="h-10 px-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:outline-none"
-                    />
-                  </div>
-                  {error && (
-                    <div className="text-sm text-red-400 bg-red-500/10 p-3 rounded-lg border border-red-500/20">
-                      {error}
-                    </div>
-                  )}
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full h-10 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
-                  >
-                    {isLoading ? "Enviando..." : "Enviar link de recuperação"}
-                  </button>
-                </div>
-                <div className="mt-4 text-center text-sm text-gray-400">
-                  Lembrou sua senha?{" "}
-                  <Link href="/auth/login" className="text-blue-400 hover:underline font-medium">
-                    Voltar para login
-                  </Link>
-                </div>
-              </form>
-            )}
+
+              <button
+                type="submit"
+                className="h-10 w-full rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold hover:opacity-90"
+              >
+                Enviar link
+              </button>
+            </form>
+
+            <Link
+              href="/auth/login"
+              className="block mt-4 text-center text-sm text-gray-400 hover:text-gray-200"
+            >
+              ← Voltar ao login
+            </Link>
+          </>
+        ) : (
+          <div className="text-center">
+            <h2 className="text-xl font-bold text-white mb-2">Email enviado!</h2>
+            <p className="text-gray-400 text-sm mb-6">
+              Se o email existir no sistema, você receberá um link para redefinir sua senha.
+            </p>
+
+            <Link
+              href="/auth/login"
+              className="px-4 py-2 rounded-lg text-white bg-blue-600 hover:bg-blue-500 transition-colors"
+            >
+              Voltar ao login
+            </Link>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )

@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [forgotMessage, setForgotMessage] = useState<string | null>(null)
   const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -38,6 +39,18 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  const handleForgotPassword = () => {
+    if (!email) {
+      setForgotMessage("Digite seu email acima para enviarmos a simulação.")
+      return
+    }
+
+    // Simulação de envio de email
+    setForgotMessage(
+      `Um email foi enviado para ${email} com as instruções para redefinir sua senha (simulação).`
+    )
   }
 
   return (
@@ -86,11 +99,19 @@ export default function LoginPage() {
                     className="h-10 px-3 rounded-lg bg-gray-800 text-white border border-gray-700 focus:border-blue-500 focus:outline-none"
                   />
                 </div>
+
                 {error && (
                   <div className="text-sm text-red-400 bg-red-500/10 p-3 rounded-lg border border-red-500/20">
                     {error}
                   </div>
                 )}
+
+                {forgotMessage && (
+                  <div className="text-sm text-blue-400 bg-blue-500/10 p-3 rounded-lg border border-blue-500/20">
+                    {forgotMessage}
+                  </div>
+                )}
+
                 <button
                   type="submit"
                   disabled={isLoading}
@@ -98,7 +119,16 @@ export default function LoginPage() {
                 >
                   {isLoading ? "Entrando..." : "Entrar"}
                 </button>
+
+                <Link
+                  href="/auth/forgot-password"
+                  className="w-full text-sm text-blue-400 hover:underline mt-2 block text-center"
+                >
+                  Esqueci minha senha
+                </Link>
+
               </div>
+
               <div className="mt-4 text-center text-sm text-gray-400">
                 Não tem uma conta?{" "}
                 <Link href="/auth/sign-up" className="text-blue-400 hover:underline font-medium">

@@ -8,6 +8,12 @@ import { Loader2 } from "lucide-react"
 
 const currencies = ["USD", "BRL", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "ARS"]
 
+function seededRandom(seed: number) {
+  const x = Math.sin(seed) * 10000
+  return x - Math.floor(x)
+}
+
+
 export function CurrencyChart() {
   const [baseCurrency, setBaseCurrency] = useState("USD")
   const [targetCurrency, setTargetCurrency] = useState("BRL")
@@ -20,39 +26,46 @@ export function CurrencyChart() {
   }, [baseCurrency, targetCurrency, period])
 
   const fetchHistoricalData = async () => {
-    setLoading(true)
-    try {
-      // Generate mock historical data (in production, use a real API)
-      const days = Number.parseInt(period)
-      const data = []
-      const today = new Date()
+  setLoading(true)
+  try {
+    const days = Number.parseInt(period)
+    const data = []
+    const today = new Date()
 
-      for (let i = days - 1; i >= 0; i--) {
-        const date = new Date(today)
-        date.setDate(date.getDate() - i)
+    const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`)
+    const apiData = await response.json()
+    const baseRate = apiData.rates[targetCurrency]
 
-        // Fetch rate for this date (using current API as approximation)
-        const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`)
-        const apiData = await response.json()
-        const rate = apiData.rates[targetCurrency]
+    for (let i = days - 1; i >= 0; i--) {
+      const date = new Date(today)
+      date.setDate(date.getDate() - i)
 
-        // Add some variation for historical simulation
-        const variation = (Math.random() - 0.5) * 0.1
-        const historicalRate = rate * (1 + variation)
+      const seed =
+        i * 999 +
+        baseCurrency.charCodeAt(0) * 13 +
+        targetCurrency.charCodeAt(0) * 7 +
+        parseInt(period)
 
-        data.push({
-          date: date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }),
-          taxa: Number.parseFloat(historicalRate.toFixed(4)),
-        })
-      }
+      const rand = seededRandom(seed)
 
-      setChartData(data)
-    } catch (error) {
-      console.error("Error fetching historical data:", error)
-    } finally {
-      setLoading(false)
+      const variation = (rand - 0.5) * 0.10
+
+      const historicalRate = baseRate * (1 + variation)
+
+      data.push({
+        date: date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }),
+        taxa: Number(historicalRate.toFixed(4))
+      })
     }
+
+    setChartData(data)
+  } catch (error) {
+    console.error("Error fetching historical data:", error)
+  } finally {
+    setLoading(false)
   }
+}
+
 
   const currentRate = chartData.length > 0 ? chartData[chartData.length - 1].taxa : 0
   const previousRate = chartData.length > 1 ? chartData[0].taxa : 0

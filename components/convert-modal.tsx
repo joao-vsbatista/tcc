@@ -48,12 +48,12 @@ export function ConvertModal({ userId, profile, onClose }: ConvertModalProps) {
   }, [fromCurrency, toCurrency, amount])
 
   const calculateFees = (baseAmount: number) => {
-    const spreadRate = 0.04 // 4% spread bancário
-    const conversionFee = 0.01 // 1% taxa de conversão
+    const spreadRate = 0.04
+    const conversionFee = 0.01
     const totalFeeRate = spreadRate + conversionFee
 
     const totalFees = baseAmount * totalFeeRate
-    const finalAmount = baseAmount - totalFees // Subtrai porque está convertendo da carteira
+    const finalAmount = baseAmount - totalFees
 
     return { finalAmount, totalFeeRate, totalFees }
   }
@@ -91,7 +91,7 @@ export function ConvertModal({ userId, profile, onClose }: ConvertModalProps) {
         .eq("user_id", userId)
         .eq("currency", fromCurrency)
 
-      // Verifica se já existe carteira na moeda de destino
+
       const { data: existingWallet } = await supabase
         .from("wallet")
         .select("id")
@@ -113,7 +113,7 @@ export function ConvertModal({ userId, profile, onClose }: ConvertModalProps) {
         })
       }
 
-      // Registra histórico
+
       await supabase.from("conversion_history").insert({
         user_id: userId,
         from_currency: fromCurrency,
@@ -123,7 +123,7 @@ export function ConvertModal({ userId, profile, onClose }: ConvertModalProps) {
         rate: rate || 0,
       })
 
-      // Registra transação
+
       await supabase.from("wallet_transactions").insert({
         user_id: userId,
         type: "convert",

@@ -21,7 +21,7 @@ export function AddBalanceModal({ userId, onClose }: AddBalanceModalProps) {
 
     setLoading(true)
     try {
-      // Busca saldo atual
+
       const { data: wallet } = await supabase
         .from("wallet")
         .select("balance")
@@ -32,7 +32,7 @@ export function AddBalanceModal({ userId, onClose }: AddBalanceModalProps) {
       const currentBalance = wallet?.balance || 0
       const newBalance = currentBalance + Number(amount)
 
-      // Atualiza ou insere
+
       const { error } = await supabase.from("wallet").upsert({
         user_id: userId,
         currency: "BRL",
@@ -40,7 +40,7 @@ export function AddBalanceModal({ userId, onClose }: AddBalanceModalProps) {
       })
 
       if (!error) {
-        // Registra transação
+
         await supabase.from("wallet_transactions").insert({
           user_id: userId,
           type: "deposit",

@@ -4,15 +4,15 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.15 0 0); /* Almost black */
-  --foreground: oklch(0.98 0 0); /* Almost white */
-  --card: oklch(0.2 0 0); /* Dark gray */
-  --card-foreground: oklch(0.98 0 0); /* White text */
+  --background: oklch(0.15 0 0);
+  --foreground: oklch(0.98 0 0);
+  --card: oklch(0.2 0 0);
+  --card-foreground: oklch(0.98 0 0);
   --popover: oklch(0.2 0 0);
   --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.98 0 0); /* White */
-  --primary-foreground: oklch(0.15 0 0); /* Black */
-  --secondary: oklch(0.3 0 0); /* Medium gray */
+  --primary: oklch(0.98 0 0);
+  --primary-foreground: oklch(0.15 0 0);
+  --secondary: oklch(0.3 0 0);
   --secondary-foreground: oklch(0.98 0 0);
   --muted: oklch(0.25 0 0);
   --muted-foreground: oklch(0.7 0 0);
@@ -124,7 +124,7 @@
   }
 }
 
-/* Added smooth transitions for theme switching and animations */
+
 @layer utilities {
   .animate-in {
     animation: slideIn 0.3s ease-out;
@@ -157,7 +157,7 @@
   }
 }
 
-/* Smooth transitions for theme changes */
+
 * {
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }

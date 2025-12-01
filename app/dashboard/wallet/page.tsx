@@ -15,7 +15,6 @@ export default async function WalletPage() {
     redirect("/auth/login")
   }
 
-  // Fetch wallet balances
   const { data: walletData } = await supabase
     .from("wallet")
     .select("*")

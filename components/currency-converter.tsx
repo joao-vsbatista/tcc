@@ -31,7 +31,7 @@ export function CurrencyConverter({ user, profile }: CurrencyConverterProps) {
 
   const supabase = createClient()
 
-  // Agora a conversão só acontece quando o usuário clica no botão
+
 
   useEffect(() => {
     calculatePreview()
@@ -72,7 +72,7 @@ export function CurrencyConverter({ user, profile }: CurrencyConverterProps) {
       setResult(convertedAmount)
       setLastUpdate(new Date())
 
-      // Salva no histórico apenas quando o botão é clicado
+
       await saveConversion(fromCurrency, toCurrency, Number(amount), convertedAmount, exchangeRate)
     } catch (error) {
       console.error("Error converting currency:", error)
