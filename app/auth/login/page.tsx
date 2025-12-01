@@ -58,9 +58,12 @@ export default function LoginPage() {
       <div className="w-full max-w-sm">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col items-center gap-2 text-center">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 mb-2">
-              <span className="text-4xl"></span>
-            </div>
+            <img
+              src="/logo.png"
+              alt="Logo do App"
+              className="w-16 h-16 mx-auto mb-2 rounded-2xl"
+            />
+
             <h1 className="text-2xl font-bold text-white">Bem-vindo de volta</h1>
             <p className="text-sm text-gray-400">Entre na sua conta para continuar</p>
           </div>
